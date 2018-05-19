@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<link rel="stylesheet" href="css/text.css" />
+		<script src="scripts/boot.js" type="text/javascript"></script>
+		<script type="text/javascript" src="js/jquery.js"></script>
+		<script type="text/javascript" src="js/ajaxfileupload.js"></script>
+		<title></title>
+	</head>
+	  <body id="textback">
+		       <div style="text-align:center;padding:10px;">               
+         
+            <input id="fileToUp" type="file" size="45" name="fileToUp" class="input"/>
+	        <button class="button" onclick="ajaxFileUp()">上传文件</button>  
+	             
+       </div>
+          <script type="text/javascript">
+  
+    mini.parse();
+    var Request=new Object();
+    var url=location.search;
+    if(url.indexOf("?")!=-1)
+    	{
+    	var str=url.substr(1);
+    	var strs=str.split("&");
+    	for(var i=0;i<strs.length;i++)
+    		{
+    		  Request[strs[i].split("=")[0]]=unescape(strs[i].split("=")[1]);
+    		}
+    	} 
+    alert("/WlrBiBased/NewsAction?username="+Request["username"]+"&flag=addNews");
+    function ajaxFileUp() {
+		$.ajaxFileUpload({
+			url : "/WlrBiBased/NewsAction?username="+Request["username"]+"&flag=addNews",
+			secureuri : false,
+			fileElementId : 'fileToUp',
+			dataType : 'json',
+			data : {},
+			success : function(data, status) {
+				alert('上传成功');
+			},
+			error : function(data, status, e) {
+				alert('上传出错');
+			}
+		})
+
+		return false;
+
+	}
+    
+  
+    </script>   
+	</body>
+</html>

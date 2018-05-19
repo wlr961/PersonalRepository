@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script type="text/javascript" src="scripts/boot.js"></script>
+</head>
+<body>
+<form id="form1" method="post"> 
+    <!-- 数据区 -->
+        <fieldset style="border:solid 1px #aaa;padding:3px;">
+            <legend >账户信息</legend>
+            <div style="padding:5px;">
+        <table> 
+            <tr>
+                <td style="width:70px;">名字:</td>
+                <td style="width:150px;">    
+                    <input name="name" class="mini-textbox" required="true" enable="false"/>
+                </td>   
+                 <td style="width:70px;">民族:</td>
+                <td style="width:150px;">    
+                    <input name="nation" class="mini-textbox" required="true"/>
+                </td>              
+                                    
+            </tr>        
+            <tr>
+                <td style="width:70px;">学院:</td>
+                <td style="width:150px;">    
+                    <input name="dept" class="mini-textbox" required="true"/>
+                </td>                
+                <td >专业:</td>
+                <td >    
+                    <input name="profession" class="mini-textbox" required="true"/>
+                </td>                            
+            </tr> 
+            
+            
+            <tr>
+             <td style="width:70px;">性别：</td>
+                <td >                        
+                    <select name="gender" class="mini-radiobuttonlist">
+                        <option value="1">男</option>
+                        <option value="0">女</option>
+                    </select>
+                </td>     
+             <td >身份证号:</td>
+                <td >    
+                    <input id="date2" name="idnum" class="mini-textbox" required="true"  />
+                </td>    
+            </tr>
+            
+                                                              
+            <tr>              
+               <td style="width:70px;">用户名:</td>
+                <td style="width:150px;">    
+                    <input name="username" class="mini-textbox" required="true"/>
+                </td> 
+                <td style="width:70px;">用户密码:</td>
+                <td style="width:150px;">    
+                    <input name="usercode" class="mini-textbox" required="true"/>
+                </td>             
+            </tr>  
+            
+            <tr>              
+               <td style="width:70px;">邮箱:</td>
+                <td style="width:150px;">    
+                    <input name="email" class="mini-textbox" required="true"/>
+                </td> 
+                <td style="width:70px;">电话:</td>
+                <td style="width:150px;">    
+                    <input name="tel" class="mini-textbox" required="true"/>
+                </td>             
+            </tr>        
+            <tr>
+                <td >用户身份：</td>
+                <td colspan="3">    
+                    <input name="degree" class="mini-combobox" alwaysView="true"  url="data/degree.txt" />
+                </td>
+            </tr>                     
+        </table>            
+            </div>
+        </fieldset>
+        
+        <!-- 按钮区 -->
+        <div style="text-align:center;padding:10px;">               
+            <a class="mini-button" onclick="addData()" style="width:60px;margin-right:20px;">确定</a>       
+            <a class="mini-button" onclick="onCancel()" style="width:60px;">取消</a>       
+        </div>        
+    </form>
+ <script type="text/javascript">
+//设置或返回当前 URL 的查询部分
+ var url=location.search;
+ var Request=new Object();
+ if(url.indexOf("?")!=-1)
+ 	{
+ 	var str=url.substr(1);
+ 	var strs=str.split("&");
+ 	for(var i=0;i<strs.length;i++)
+ 		{
+ 		  Request[strs[i].split("=")[0]]=unescape(strs[i].split("=")[1]);
+ 		}
+ 	} 
+ 	//将控件转换为mini控件
+    mini.parse();
+    
+    function addData()
+    {
+    	 var form = new mini.Form("#form1");        
+         var data = form.getData();     
+         //获取表单提交的数据
+         var json = mini.encode(data);  
+         $.ajax({
+             url: "/WlrBiBased/UsersAction",
+             type: "post",
+             data: { submitData: json,username:Request["username"],flag:"addUsers" },
+             success: function (text) {
+                mini.alert("success","tip",function(){  CloseWindow("save");});
+             },
+             error: function (jqXHR, textStatus, errorThrown) {
+            	 mini.alert("failure","tip",function(){});
+             }
+         });
+    }
+    
+   
+    function onCancel()
+    {
+    	CloseWindow("cancel");
+    }   
+    
+    function CloseWindow(action) {            
+        if (action == "close" && form.isChanged()) {
+            if (confirm("数据被修改了，是否先保存？")) {
+                return false;
+            }
+        }
+        if (window.CloseOwnerWindow) 
+        	{
+        	return window.CloseOwnerWindow(action);
+        	}
+        else 
+        	{
+        	window.close();    
+        	}        
+    }
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script type="text/javascript" src="scripts/boot.js"></script>
+</head>
+<body>
+<div allowResize="false" width="100%">
+        <div class="mini-toolbar" style="border-bottom:0;padding:0px;" >
+            <table style="width:100%;">
+                <tr >
+                    <td style="width:100%;">
+                        <a  class="mini-button" iconCls="icon-add" onclick="add()">增加</a>
+                        <a  class="mini-button" iconCls="icon-remove" onclick="remove()">删除选中</a>       
+                    </td>
+                    <td style="white-space:nowrap;">
+                        <input id="key1" class="mini-textbox" emptyText="请输入用户名" style="width:150px;" onenter="onKeyEnter"/> 
+                        <input id="key2" class="mini-combobox"  emptyText="请选择用户身份" alwaysView="true"  url="data/degree.txt"/>  
+                        <a class="mini-button" onclick="search()">查询</a>
+                    </td>
+                </tr>
+            </table>           
+        </div>
+    </div>
+    <div id="datagrid1" class="mini-datagrid"  allowResize="false"  width="100%"
+        url="/WlrBiBased/UsersAction" idField="id" multiSelect="true" >
+        <div property="columns">
+            <!--<div type="indexcolumn"></div>        -->
+            <div type="checkcolumn" ></div>        
+            <div field="name" width="120" headerAlign="center" allowSort="true">姓名</div>   
+            <div field="gender" width="120" headerAlign="center" allowSort="true" renderer="onGenderRenderer">性别</div>  
+            <div field="nation" width="120" renderer="onGenderRenderer" >民族</div>  
+            <div field="dept" width="120" renderer="onGenderRendere" >学院</div>
+            <div field="profession" width="100" dateFormat="yyyy-MM-dd">专业</div>
+            <div field="idnum" width="100">身份证号码</div>
+            <div field="username" width="100">用户名</div> 
+            <div field="usercode" width="100">密码</div> 
+            <div field="email" width="100">邮箱</div> 
+            <div field="tel" width="100">电话</div> 
+            <div field="degree" width="100">账户身份</div> 
+            <div field="edit" width="100"  renderer="onActionRenderer" >操作</div>                                                 
+        </div>
+    </div>
+    <script type="text/javascript">
+    var url=location.search;
+    var Request=new Object();
+    if(url.indexOf("?")!=-1)
+    	{
+    	var str=url.substr(1);
+    	var strs=str.split("&");
+    	for(var i=0;i<strs.length;i++)
+    		{
+    		  Request[strs[i].split("=")[0]]=unescape(strs[i].split("=")[1]);
+    		}
+    	} 
+    mini.parse();
+    var grid = mini.get("datagrid1");
+    grid.load({"flag":"selectUser"});
+    
+    function search(){
+    	var search1 = mini.get("key1");
+    	var search2 = mini.get("key2");
+    	var arg1=search1.getValue();
+    	var arg2=search2.getValue();
+    	grid.load({"key1":arg1,"key2":arg2,"flag":"selectUser"});	
+    }
+    
+
+
+    function add(){
+    	   mini.open({
+    	        targetWindow: window,
+    	        url:  "adduser.html?username="+Request["username"],
+    	        title: "新增用户", width: 600, height: 400,
+    	        onload: function () {
+    	            var iframe = this.getIFrameEl();
+    	            var data = { action: "new" };
+    	        },
+    	        ondestroy: function (action) {
+    	            grid.reload();
+    	        }
+    	    });
+    }
+    function onActionRenderer(e) {
+    	var s = '<a class="Edit_Button" href="javascript:edit()">编辑</a> &nbsp<a  class="Edit_Button" href="javascript:remove()">删除</a> &nbsp';
+    	return s;
+    }
+    
+    function remove() {        
+        var rows = grid.getSelecteds();
+        if (rows.length > 0) {
+            if (confirm("确定删除选中记录？")) {
+                var ids = [];
+                for (var i = 0; i < rows.length; i++) {
+                    var r = rows[i];
+                    ids.push(r.username+'+'+r.degree);
+                }
+                //将ids数组的值，以“，”连接为一个新的字符串
+                var id = ids.join(','); 
+                grid.loading("操作中，请稍后......");
+                $.ajax({
+                    url: "/WlrBiBased/UsersAction" ,
+                    data:{data:id,flag:"delUsers"},
+                    success: function (text) {
+                    	 grid.reload(); 
+                    },
+                    error: function () {
+                    }
+                });
+            }
+        } else {
+            alert("请选中一条记录");
+        }
+    }
+      
+    
+    function edit() {
+        
+        var row = grid.getSelected();
+        if (row) {
+            mini.open({
+                url:  "/WlrBiBased/editaccount.html",
+                title: "账户修改", width: 600, height: 400,
+                onload: function () {
+                	//获取弹出框对象
+                    var iframe = this.getIFrameEl();
+                    var data = { username: row.username, userdegree: row.degree,action: "edit" };
+                    iframe.contentWindow.SetData(data);
+                },
+                ondestroy: function (action) {
+                    //var iframe = this.getIFrameEl();
+                    grid.reload();
+                }
+            });
+            
+        } else {
+            alert("请选中一条记录");
+        }
+        
+    }
+
+    
+    var Genders = [{ id: 1, text: '男' }, { id: 0, text: '女'}];        
+    function onGenderRenderer(e) {
+        for (var i = 0, l = Genders.length; i < l; i++) {
+            var g = Genders[i];
+            if (g.id == e.value) return g.text;
+        }
+        return "";
+    }
+
+    </script>
+</body>
+</html>

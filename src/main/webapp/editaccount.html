@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script type="text/javascript" src="scripts/boot.js"></script>
+</head>
+<body>
+ <form id="form1" method="post"> 
+    <!-- 数据区 -->
+        <fieldset style="border:solid 1px #aaa;padding:3px;">
+            <legend >账户信息</legend>
+            <div style="padding:5px;">
+        <table> 
+            <tr>
+                <td style="width:70px;">名字:</td>
+                <td style="width:150px;">    
+                    <input name="name" class="mini-textbox" required="true" enable="false"/>
+                </td>   
+                 <td style="width:70px;">民族:</td>
+                <td style="width:150px;">    
+                    <input name="nation" class="mini-textbox" required="true"/>
+                </td>              
+                                    
+            </tr>        
+            <tr>
+                <td style="width:70px;">学院:</td>
+                <td style="width:150px;">    
+                    <input name="dept" class="mini-textbox" required="true"/>
+                </td>                
+                <td >专业:</td>
+                <td >    
+                    <input name="profession" class="mini-textbox" required="true"/>
+                </td>                            
+            </tr> 
+            
+            
+            <tr>
+             <td style="width:70px;">性别：</td>
+                <td >                        
+                    <select name="gender" class="mini-radiobuttonlist">
+                        <option value="1">男</option>
+                        <option value="0">女</option>
+                    </select>
+                </td>     
+             <td >身份证号:</td>
+                <td >    
+                    <input id="date2" name="idnum" class="mini-textbox" required="true"  />
+                </td>    
+            </tr>
+            
+                                                              
+            <tr>              
+               <td style="width:70px;">用户名:</td>
+                <td style="width:150px;">    
+                    <input name="username" class="mini-textbox" required="true"/>
+                </td> 
+                <td style="width:70px;">用户密码:</td>
+                <td style="width:150px;">    
+                    <input name="usercode" class="mini-textbox" required="true"/>
+                </td>             
+            </tr>  
+            
+            <tr>              
+               <td style="width:70px;">邮箱:</td>
+                <td style="width:150px;">    
+                    <input name="email" class="mini-textbox" required="true"/>
+                </td> 
+                <td style="width:70px;">电话:</td>
+                <td style="width:150px;">    
+                    <input name="tel" class="mini-textbox" required="true"/>
+                </td>             
+            </tr>        
+            <tr>
+                <td >用户身份：</td>
+                <td colspan="3">    
+                    <input name="degree" class="mini-combobox" alwaysView="true"  url="data/degree.txt" />
+                </td>
+            </tr>                     
+        </table>            
+            </div>
+        </fieldset>
+        
+        <!-- 按钮区 -->
+        <div style="text-align:center;padding:10px;">               
+            <a class="mini-button" onclick="SaveData()" style="width:60px;margin-right:20px;">确定</a>       
+            <a class="mini-button" onclick="onCancel()" style="width:60px;">取消</a>       
+        </div>        
+    </form>
+<script type="text/javascript">
+    mini.parse();
+    var form = new mini.Form("form1");    
+    function SaveData() {
+        var o = form.getData();            
+        var json = mini.encode(o);
+        $.ajax({
+            url: "/WlrBiBased/UsersAction",
+            type: 'post',
+            data: { data: json,flag:"editUser"},
+            cache: false,
+            success: function (text) {
+                mini.alert("success","tip",function(){  CloseWindow("save");});
+             },
+             error: function (jqXHR, textStatus, errorThrown) {
+            	 mini.alert("failure","tip",function(){});
+             }
+        });
+    }
+    
+    function SetData(data) {    
+    	
+        if (data.action == "edit") {
+            //跨页面传递的数据对象，克隆后才可以安全使用
+            data = mini.clone(data);
+            $.ajax({            	
+                url: "/WlrBiBased/UsersAction",
+                data:{username:data.username,userdegree:data.userdegree,flag:"selectInfoUser"},
+                cache: false,
+                success: function (text) {
+                	//2018
+                    var o = mini.decode(text);
+                    form.setData(o);
+                    form.setChanged(false);                   
+                }
+            });
+        }
+    }
+    
+    function CloseWindow(action) {            
+        if (action == "close" && form.isChanged()) {
+            if (confirm("数据被修改了，是否先保存？")) {
+                return false;
+            }
+        }
+        if (window.CloseOwnerWindow) return window.CloseOwnerWindow(action);
+        else window.close();            
+    }
+    </script>
+</body>
+</html>

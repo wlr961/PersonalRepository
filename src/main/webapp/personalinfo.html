@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script src="assets/js/jquery-1.10.2.js"></script>
+<script src="assets/js/bootstrap.min.js"></script>
+<script src="assets/js/jquery.metisMenu.js"></script>
+<script src="assets/js/custom.js"></script>
+<script type="text/javascript" src="scripts/boot.js"></script>
+<link href="assets/css/bootstrap.css" rel="stylesheet" />
+<link href="assets/css/font-awesome.css" rel="stylesheet" />
+<link href="assets/css/custom.css" rel="stylesheet" />
+</head>
+<body>
+ <form id="form1" method="post" style="width:90%;height:1000px;margin-top:50px;margin-right:5%;margin-left:5%;align:center;border:solid 1px red;">
+     <table border=1 align="center" width="100%" height="130">
+        <tr><td rowspan="4" width=15% ><img src="assets/img/find_user.png" class="user-image img-responsive"/></td></tr>
+        <tr><td align="center" height="50px"><label class="control-label">&ensp;姓&ensp;名&ensp;</label></td><td><input required="true" name="name" class="mini-textbox" style=";width:80%;margin-right:10%;margin-left:10%;"/></td></tr>
+        <tr><td align="center" height="50px"><label class="control-label">&ensp;民&ensp;族&ensp;</label></td><td><input required="true" name="nation" class="mini-textbox" style=";width:80%;margin-right:10%;margin-left:10%;"/></td></tr>
+        <tr><td align="center" height="50px"><label class="control-label">&ensp;性&ensp;别&ensp;</label></td><td><input required="true" name="gender" class="mini-textbox" style=";width:80%;margin-right:10%;margin-left:10%;"/></td></tr>
+        <tr ><td align="center" colspan="2" width="30%" height="100px"><label class="control-label">&ensp;学&ensp;院&ensp;</label></td><td><input required="true" name="dept" class="mini-textbox" style=";width:80%;margin-right:10%;margin-left:10%;"/></td></tr>
+        <tr ><td align="center" colspan="2" width="30%" height="100px"><label class="control-label">&ensp;专&ensp;业&ensp;</label></td><td><input required="true" name="profession" class="mini-textbox" style=";width:80%;margin-right:10%;margin-left:10%;"/></td></tr>
+        <tr ><td align="center" colspan="2" width="30%" height="100px"><label class="control-label">&ensp;身份证&ensp;</label></td><td><input required="true" name="idnum" class="mini-textbox" style=";width:80%;margin-right:10%;margin-left:10%;"/></td></tr>
+        <tr ><td align="center" colspan="2" width="30%" height="100px"><label class="control-label">&ensp;用户名&ensp;</label></td><td><input required="true" name="username" class="mini-textbox" style=";width:80%;margin-right:10%;margin-left:10%;"/></td></tr>
+        <tr ><td align="center" colspan="2" width="30%" height="100px"><label class="control-label">&ensp;密&ensp;码&ensp;</label></td><td><input required="true" name="usercode" class="mini-textbox" style=";width:80%;margin-right:10%;margin-left:10%;"/></td></tr>
+        <tr ><td align="center" colspan="2" width="30%" height="100px"><label class="control-label">&ensp;邮&ensp;箱&ensp;</label></td><td><input required="true" name="email" class="mini-textbox" style=";width:80%;margin-right:10%;margin-left:10%;"/></td></tr>
+        <tr ><td align="center" colspan="2" width="30%" height="100px"><label class="control-label">&ensp;电&ensp;话&ensp;</label></td><td><input required="true" name="tel" class="mini-textbox" style=";width:80%;margin-right:10%;margin-left:10%;"/></td></tr>        
+     </table> 
+
+ </form>
+ <script type="text/javascript">
+ var url=location.search;
+ var Request=new Object();
+ if(url.indexOf("?")!=-1)
+ 	{
+ 	var str=url.substr(1);
+ 	var strs=str.split("&");
+ 	for(var i=0;i<strs.length;i++)
+ 		{
+ 		  Request[strs[i].split("=")[0]]=unescape(strs[i].split("=")[1]);
+ 		}
+ 	} 
+ mini.parse();
+ var form = new mini.Form("#form1");
+ $.ajax({
+     url: "/WlrBiBased/UsersAction",
+     data:{username:Request["username"],usercode:Request["usercode"],userdegree:Request["userdegree"],flag:"selectInfoUser"},
+     cache: false,
+     success: function (text) {
+         var o = mini.decode(text);
+         form.setData(o);
+         form.setChanged(false);
+     }
+ });
+ 
+ </script>
+</body>
+</html>

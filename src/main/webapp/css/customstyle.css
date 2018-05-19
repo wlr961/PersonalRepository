@@ -1,0 +1,15 @@
+.custom_selectbtn {
+    background-color: transparent;
+    color: white;
+    padding: 16px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+	display:inline-block;
+	text-decoration:none;
+	margin-top:20px;
+	height:45px;
+}	
+.custom_selectbtn:hover{
+    background-color: #400000;
+}

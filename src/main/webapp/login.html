@@ -1,0 +1,126 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Free Bootstrap Admin Template : Binary Admin</title>
+	<!-- BOOTSTRAP STYLES-->
+    <link href="assets/css/bootstrap.css" rel="stylesheet" />
+     <!-- FONTAWESOME STYLES-->
+    <link href="assets/css/font-awesome.css" rel="stylesheet" />
+        <!-- CUSTOM STYLES-->
+    <link href="assets/css/custom.css" rel="stylesheet" />
+     <!-- GOOGLE FONTS-->
+   <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css' />
+   <script type="text/javascript" src="scripts/boot.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="row text-center ">
+            <div class="col-md-12">
+                <br /><br />
+                <h2> BiBased Manager System : Login</h2>
+               
+                <h5></h5>
+                 <br />
+            </div>
+        </div>
+         <div class="row ">
+               
+                  <div class="col-md-4 col-md-offset-4 col-sm-6 col-sm-offset-3 col-xs-10 col-xs-offset-1">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                        <strong>   输入学号密码登录 </strong>  
+                            </div>
+                            <div class="panel-body">
+                                <form role="form">
+                                       <br />
+                                     <div class="form-group input-group">
+                                            <span class="input-group-addon"><i class="fa fa-tag"  ></i></span>
+                                            <input id="username" type="text" class="form-control" placeholder="Your Username " />
+                                        </div>
+                                         <div class="form-group input-group">
+                                            <span class="input-group-addon"><i class="fa fa-lock"  ></i></span>
+                                            <input id="usercode" type="password" class="form-control"  placeholder="Your Password" />
+                                        </div>
+                                        <div class="form-group input-group">
+                                            <span class="input-group-addon"><i class="fa fa-eur"></i></span>
+                                              <select id="userdegree" class="form-control">
+                                                <option>学生</option>
+                                                <option>教师</option>
+                                                <option>管理员</option>
+                                            </select>
+                                        </div>
+                                    <div class="form-group">
+                                            <label class="checkbox-inline">
+                                                <input type="checkbox" /> 记住密码
+                                            </label>
+                                            <span class="pull-right">
+                                                   <a href="#" >忘记密码 ? </a> 
+                                            </span>
+                                        </div>
+                                     
+                                     <a href="javascript:onLogin()" class="btn btn-primary " style="margin-left:20px">&ensp;确&ensp;定&ensp;</a>
+                                     <a href="javascript:onCancel()" class="btn btn-primary " style="float:right;margin-right:20px">&ensp;取&ensp;消&ensp;</a>
+                                    <hr />
+                                                                         无账户 ? <a href="registeration.html" >click here </a> 
+                                    </form>
+                            </div>
+                           
+                        </div>
+                    </div>                                
+        </div>
+    </div>
+
+
+     <!-- SCRIPTS -AT THE BOTOM TO REDUCE THE LOAD TIME-->
+    <!-- JQUERY SCRIPTS -->
+    <script src="assets/js/jquery-1.10.2.js"></script>
+      <!-- BOOTSTRAP SCRIPTS -->
+    <script src="assets/js/bootstrap.min.js"></script>
+    <!-- METISMENU SCRIPTS -->
+    <script src="assets/js/jquery.metisMenu.js"></script>
+      <!-- CUSTOM SCRIPTS -->
+    <script src="assets/js/custom.js"></script>
+    <script type="text/javascript">
+    function onCancel() {
+        CloseWindow("cancel");
+    }
+    
+    function onLogin()
+    {
+    	 $.ajax({
+             url: "/WlrBiBased/LoginAction" ,
+             data:{username:document.all.username.value,usercode:document.all.usercode.value,userdegree:document.all.userdegree.value},
+             success: function (text) {
+             	 if(text=="true")
+             	{
+             		var url="/WlrBiBased/blank.html?username="+escape(document.all.username.value);
+                 	url+="&usercode="+escape(document.all.usercode.value);
+                	url+="&userdegree="+escape(document.all.userdegree.value);
+                	window.parent.location.href=url;
+                }
+             	 else
+             	{
+             		alert("账号或密码错误！")
+             	}
+             },
+             error: function () {
+             }
+         });   	
+    }
+    
+    function CloseWindow(action) {            
+        if (action == "close" && form.isChanged()) {
+            if (confirm("数据被修改了，是否先保存？")) {
+                return false;
+            }
+        }
+        if (window.CloseOwnerWindow) return window.CloseOwnerWindow(action);
+        else window.close();            
+    }
+    
+    </script>
+   
+</body>
+</html>

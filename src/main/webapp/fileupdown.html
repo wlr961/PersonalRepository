@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script type="text/javascript" src="js/jquery.js"></script>
+<script type="text/javascript" src="js/ajaxfileupload.js"></script>
+</head>
+<body>
+<h1>选择文件后,点击按钮上传</h1>
+	<input id="fileToUpload" type="file" size="45" name="fileToUpload"
+		class="input">
+	<button class="button" onclick="ajaxFileUpload()">上传</button>
+	<br>
+	<img id="viewImg">
+     <form action="/WlrBiBased/DownloadAction" method="post">
+
+          输入下载的文件名:<input type="text" name="filename"/>
+
+          <input type="submit" value="下载" />
+     </form>
+</body>
+<script type="text/javascript">
+    var url;
+	function ajaxFileUpload() {
+		$.ajaxFileUpload({
+			url : 'UploadAction',
+			secureuri : false,
+			fileElementId : 'fileToUpload',
+			dataType : 'json',
+			data : {username : $("#username").val()},
+			success : function(data, status) {
+				$('#viewImg').attr('src',data.picUrl);
+				url=data.picUrl;
+			},
+			error : function(data, status, e) {
+				alert('上传出错');
+			}
+		})
+
+		return false;
+
+	}
+	function downloadFile(){
+	    var form=$("<form>");//定义form表单,通过表单发送请求
+	    form.attr("style","display:none");//设置为不显示
+	    form.attr("target","");
+	    form.attr("method","get");//设置请求类型  
+	    form.attr("action",url);//设置请求路径
+	    $("body").append(form);//添加表单到页面(body)中
+	    form.submit();//表单提交
+	}
+</script>
+</html>

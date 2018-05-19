@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script type="text/javascript" src="scripts/boot.js"></script>
+<link href="assets/css/bootstrap.css" rel="stylesheet" />
+<link href="assets/css/font-awesome.css" rel="stylesheet" />
+<link href="assets/css/custom.css" rel="stylesheet" />
+</head>
+<body>
+ <div class="panel panel-default" style="width:800px">
+                        <div class="panel-heading">
+                                                                   学生账户权限配置
+                        </div>
+                        <div class="panel-body">
+    <table >
+        <tr>
+            <td >
+                <div id="grid1" class="mini-datagrid" style="width:180px;height:200px;"
+                    idField="id" multiSelect="true"
+                    url="data/countrys.txt" resultAsData="true" showPager="false">
+                    <div property="columns">
+                        <div type="checkcolumn"></div>
+                        <div header="权限列表" field="text"></div>
+                    </div>
+                </div>
+            </td>
+            <td style="width:60px;text-align:center;">
+                <input type="button" value=">" onclick="adds()" style="width:40px;"/><br />
+                <input type="button" value=">>" onclick="addAll()" style="width:40px;"/><br />
+                <input type="button" value="&lt;&lt;" onclick="removeAll()" style="width:40px;"/><br />
+                <input type="button" value="&lt;" onclick="removes()" style="width:40px;"/><br />
+            </td>
+            <td>
+                <div id="grid2" class="mini-datagrid" style="width:250px;height:200px;"                     
+                    idField="id"  multiSelect="true" showPager="false" url="/WlrBiBased/DegreeAction"
+                    allowCellEdit="true" allowCellSelect="true">
+                    <div property="columns">
+                        <div type="checkcolumn"></div>
+                        <div header="ID" field="id" width="30"></div>
+                        <div header="已持有权限" field="text">
+                            <!-- 设置选项内容可编辑 -->
+                            <input property="editor" class="mini-textbox" style="width:100%"/>
+                        </div>
+                    </div>
+                </div>
+            </td>
+            <td style="width:50px;text-align:center;vertical-align:bottom">
+                <input type="button" value="Up" onclick="upItem()" style="width:55px;"/>
+                <input type="button" value="Down" onclick="downItem()" style="width:55px;"/>
+                <input type="button" value="Save" onclick="saveData()" style="width:55px;"/>
+            </td>
+        </tr>
+    
+    </table> 
+     </div>
+</div>
+    
+  
+  
+  
+  
+  
+    
+<div class="panel panel-default" style="width:800px">
+                        <div class="panel-heading">
+                                                  教师账户权限配置
+                        </div>
+                        <div class="panel-body">
+    <table >
+        <tr>
+            <td >
+                <div id="grid3" class="mini-datagrid" style="width:180px;height:200px;"
+                    idField="id" multiSelect="true"
+                    url="data/countrys.txt" resultAsData="true" showPager="false">
+                    <div property="columns">
+                        <div type="checkcolumn"></div>
+                        <div header="权限列表" field="text"></div>
+                    </div>
+                </div>
+            </td>
+            <td style="width:60px;text-align:center;">
+                <input type="button" value=">" onclick="adds2()" style="width:40px;"/><br />
+                <input type="button" value=">>" onclick="addAll2()" style="width:40px;"/><br />
+                <input type="button" value="&lt;&lt;" onclick="removeAll2()" style="width:40px;"/><br />
+                <input type="button" value="&lt;" onclick="removes2()" style="width:40px;"/><br />
+            </td>
+            <td>
+                <div id="grid4" class="mini-datagrid" style="width:250px;height:200px;"                     
+                    idField="id"  multiSelect="true" showPager="false"  url="/WlrBiBased/DegreeAction"
+                    allowCellEdit="true" allowCellSelect="true">
+                    <div property="columns">
+                        <div type="checkcolumn"></div>
+                        <div header="ID" field="id" width="30"></div>
+                        <div header="已持有权限" field="text">
+                            <input property="editor" class="mini-textbox" style="width:100%"/>
+                        </div>
+                    </div>
+                </div>
+            </td>
+            <td style="width:50px;text-align:center;vertical-align:bottom">
+                <input type="button" value="Up" onclick="upItem2()" style="width:55px;"/>
+                <input type="button" value="Down" onclick="downIte2()" style="width:55px;"/>
+                <input type="button" value="Save" onclick="saveData2()" style="width:55px;"/>
+
+            </td>
+        </tr>
+    
+    </table> 
+    </div>
+    </div>
+ 
+    <script type="text/javascript">
+        mini.parse();
+        var grid1 = mini.get("grid1");
+        var grid2 = mini.get("grid2");
+        var grid3 = mini.get("grid3");
+        var grid4 = mini.get("grid4");
+
+        grid1.load();
+        grid2.load({"flag":"selectStudentDegree"});
+        grid3.load();
+        grid4.load({"flag":"selectTeacherDegree"});
+        
+        function doAddItems(items) {
+            items = mini.clone(items);
+
+            //根据id判断，去除重复的item
+            for (var i = items.length - 1; i >= 0; i-- ) {
+                var item = items[i];
+                //判断权限列表中是否已经存在
+                var item2 = grid2.findRow(function (row) {
+                    if (row.id == item.id) return true;
+                });
+                //若存在，items数组中删除此项
+                if (item2) {
+                    items.removeAt(i);
+                }
+            }
+            
+            grid2.addRows(items);
+        }
+
+        function adds() {        
+            var items = grid1.getSelecteds();
+            doAddItems(items);
+        }
+        function addAll() {        
+            var items = grid1.getData();
+            doAddItems(items);
+        }
+        function removes() {
+            var items = grid2.getSelecteds();
+            //控件自带的removeRows
+            grid2.removeRows(items);
+        }
+        function removeAll() {
+            var items = grid2.getData();
+            grid2.removeRows(items);
+        }
+        function upItem() {
+            var items = grid2.getSelecteds();
+            grid2.moveUp(items);
+        }
+        function downItem() {
+            
+            var items = grid2.getSelecteds();
+            grid2.moveDown(items);
+        }
+        function saveData() {
+            var data = grid2.getData();
+            var json = mini.encode(data);
+            $.ajax({
+                url: "/WlrBiBased/DegreeAction" ,
+                data:{data:json,flag:"updateStuDegree"},
+                success: function (text) {
+                	alert("保存成功");
+                },
+                error: function () {
+                }
+            });
+            alert(json);
+        }
+        
+  
+        
+        
+        function doAddItems2(items) {
+            items = mini.clone(items);
+
+            //根据id判断，去除重复的item
+            for (var i = items.length - 1; i >= 0; i-- ) {
+                var item = items[i];
+                var item4 = grid4.findRow(function (row) {
+                    if (row.id == item.id) return true;
+                });
+                if (item4) {
+                    items.removeAt(i);
+                }
+            }
+
+            grid4.addRows(items);
+        }
+
+        function adds2() {        
+            var items = grid3.getSelecteds();
+            doAddItems2(items);
+        }
+        function addAll2() {        
+            var items = grid3.getData();
+            doAddItems2(items);
+        }
+        function removes2() {
+            var items = grid4.getSelecteds();
+            grid4.removeRows(items);
+        }
+        function removeAll2() {
+            var items = grid4.getData();
+            grid4.removeRows(items);
+        }
+        function upItem2() {
+            var items = grid4.getSelecteds();
+            grid4.moveUp(items);
+        }
+        function downItem2() {
+            
+            var items = grid4.getSelecteds();
+            grid4.moveDown(items);
+        }
+        function saveData2() {
+            var data = grid4.getData();
+            var json = mini.encode(data);
+            $.ajax({
+                url: "/WlrBiBased/DegreeAction" ,
+                data:{data:json,flag:"updateTeaDegree"},
+                success: function (text) {
+                	alert("保存成功");
+                },
+                error: function () {
+                }
+            });
+            alert(json);
+        }
+               
+    </script>
+</body>
+</html>

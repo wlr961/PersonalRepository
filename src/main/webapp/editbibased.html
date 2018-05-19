@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script src="scripts/boot.js" type="text/javascript"></script>
+</head>
+<body>
+<form id="form1" method="post"> 
+         <input name="bibno" class="mini-hidden" />
+         <div style="padding-left:11px;padding-bottom:5px;">
+            <table style="table-layout:fixed;">
+                <tr>
+                    <td style="width:80px;">课题名称：</td>
+                    <td style="width:150px;">    
+                        <input name="bibtitle" class="mini-textbox" />
+                    </td>
+                     <td style="width:80px;">指导老师：</td>
+                    <td style="width:150px;">    
+                        <input name="adviser" class="mini-textbox" />
+                    </td>
+                </tr>
+                  <tr>
+                    <td style="width:80px;">执行学生：</td>
+                    <td style="width:150px;">    
+                        <input name="student" class="mini-textbox" />
+                    </td>
+                     <td style="width:80px;">中期答辩老师：</td>
+                    <td style="width:150px;">    
+                        <input name="zpleateacher" class="mini-textbox" />
+                    </td>
+                 </tr>
+               
+                 <tr>
+                    <td style="width:80px;">最终答辩老师：</td>
+                    <td style="width:150px;">    
+                        <input name="fpleateacher" class="mini-textbox" />
+                    </td>
+                     <td style="width:80px;">中期答辩成绩：</td>
+                    <td style="width:150px;">    
+                        <input name="zgrade" class="mini-textbox" />
+                    </td>
+                 </tr> 
+                 
+                 <tr>
+                    <td style="width:80px;">最终答辩成绩：</td>
+                    <td style="width:150px;">    
+                        <input name="fgrade" class="mini-textbox" />
+                    </td>
+                 </tr>   
+                 <tr>
+                <td >课题内容：</td>
+                <td colspan="3">    
+                    <input name="bibcontent" class="mini-textarea" style="width:386px;" />
+                </td>
+            </tr>        
+            </table>
+        </div>
+        
+        <!-- 按钮区 -->
+        <div style="text-align:center;padding:10px;">               
+            <a class="mini-button" onclick="SaveData()" style="width:60px;margin-right:20px;">确定</a>       
+            <a class="mini-button" onclick="onCancel()" style="width:60px;">取消</a>       
+        </div>        
+    </form>
+</body>
+<script type="text/javascript">
+        mini.parse();
+        var form = new mini.Form("form1");
+
+        function SaveData() {
+            var o = form.getData();            
+
+            form.validate();
+            if (form.isValid() == false) return;
+
+            var json = mini.encode(o);
+            $.ajax({
+                url: "/WlrBiBased/BiBasedAction",
+		        type: 'post',
+                data: { data: json,flag:"editBiBased"},
+                cache: false,
+                success: function (text) {
+                    CloseWindow("save");
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    alert(jqXHR.responseText);
+                    CloseWindow();
+                }
+            });
+        }
+        
+        function SetData(data) {
+            if (data.action == "edit") {
+                //跨页面传递的数据对象，克隆后才可以安全使用
+                data = mini.clone(data);
+                $.ajax({
+                    url: "/WlrBiBased/BiBasedAction",
+                    data:{bibno:data.bibno,flag:"selectInfoBiBased"},
+                    cache: false,
+                    success: function (text) {
+                        var o = mini.decode(text);
+                        form.setData(o);
+                        form.setChanged(false);
+                    }
+                });
+            }
+        }
+
+        function CloseWindow(action) {            
+            if (action == "close" && form.isChanged()) {
+                if (confirm("数据被修改了，是否先保存？")) {
+                    return false;
+                }
+            }
+            if (window.CloseOwnerWindow) return window.CloseOwnerWindow(action);
+            else window.close();            
+        }
+
+</script>
+</html>

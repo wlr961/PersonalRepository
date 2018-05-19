@@ -1,0 +1,15 @@
+
+#innerlist {
+    font-size: 14px;
+    font-family: Verdana, Geneva, sans-serif;
+    color: #183E8C;
+    line-height: 26px;
+    margin:50px;padding:50px;
+    background: white;
+    width: 80%;
+}
+#back{
+	margin-right: 10%;
+    margin-left: 10%;
+	background: gray;	
+}
