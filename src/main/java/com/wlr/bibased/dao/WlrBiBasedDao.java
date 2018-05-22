@@ -131,7 +131,7 @@ public class WlrBiBasedDao {
 		}
 		return false;
 	}
-	public int addMessage(String username,String adviser,String content)
+	public int addMessage(String username,String adviser,String content,String student)
 	{
 		Connection conn=JdbcUtils.getConn();
 		PreparedStatement pst=null;
@@ -143,7 +143,14 @@ public class WlrBiBasedDao {
 		{
 			pst=conn.prepareStatement(sql);
 			pst.setString(1, username);
-			pst.setString(2, adviser);
+			if(!"".equals(student)&&null!=student)
+			{
+				pst.setString(2, student);
+			}
+			else
+			{
+				pst.setString(2, adviser);
+			}
 			pst.setString(3,content);
 			java.sql.Timestamp sendtime=new java.sql.Timestamp(new Date().getTime());
 			pst.setTimestamp(4, sendtime);
@@ -1144,6 +1151,60 @@ public class WlrBiBasedDao {
 				e.printStackTrace();
 			}
 			
+		}
+		return list;
+	}
+	
+	
+	
+	
+
+	/**
+	 * @param adviser 指导老师
+	 * @return 与当前指导老师相关的所有毕设信息
+	 */
+	public List<BiBased> getMyAllStudent(String adviser)
+	{
+		Connection conn=JdbcUtils.getConn();
+		PreparedStatement pst=null;
+		ResultSet rs=null;
+		List<BiBased> list=new ArrayList<>();
+		StringBuilder sql=new StringBuilder("select * from bibased where adviser="+"'"+adviser+"'"+" and center=1");
+		
+		try {
+			pst=conn.prepareStatement(sql.toString());
+			rs=pst.executeQuery();
+			while(rs.next())
+			{
+				BiBased bibased = new BiBased();
+			    bibased.setAdviser(rs.getString("adviser"));
+			    bibased.setBibcontent(rs.getString("bibcontent"));
+			    bibased.setBibno(rs.getString("bibno"));
+			    bibased.setBibtitle(rs.getString("bibtitle"));
+			    bibased.setFgrade(rs.getString("fgrade"));
+			    bibased.setFpleateacher(rs.getString("fpleateacher"));
+			    bibased.setPapername(rs.getString("papername"));
+			    bibased.setStudent(rs.getString("student"));
+			    bibased.setWorkname(rs.getString("workname"));
+			    bibased.setZgrade(rs.getString("zgrade"));
+			    bibased.setZpleateacher(rs.getString("zpleateacher"));
+				list.add(bibased);
+			}
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		finally
+		{
+			try {
+				rs.close();
+				pst.close();
+				conn.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}		
 		}
 		return list;
 	}

@@ -19,6 +19,10 @@ import com.wlr.bibased.utils.JdbcUtils;
 public class WlrBiBasedService {
 	
 	WlrBiBasedDao Dao=new WlrBiBasedDao();	
+	public List<BiBased> getMyAllStudent(String adviser)
+	{
+		return Dao.getMyAllStudent(adviser);
+	}
 	public List<String> getRecivers(String username)
 	{
 		return Dao.getRecivers(username);
@@ -31,9 +35,9 @@ public class WlrBiBasedService {
 	{
 		return Dao.delMessage(messid);
 	}
-	public int addMessage(String username,String adviser,String content)
+	public int addMessage(String username,String adviser,String content,String student)
 	{
-		return Dao.addMessage(username, adviser, content);
+		return Dao.addMessage(username, adviser, content,student);
 	}
 	public List<News> getAllNewsByWhere()
 	{

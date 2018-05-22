@@ -90,7 +90,8 @@ public class MessageAction extends HttpServlet {
 			 String json2Obj=request.getParameter("submitData");
 			 Message mess=JSON.parseObject(json2Obj,Message.class);
 			 String adviser=request.getParameter("adviser");
-			 int messid=service.addMessage(username, adviser, mess.getContent());
+			 String student=request.getParameter("acceptid");
+			 int messid=service.addMessage(username, adviser, mess.getContent(),student);
 			 String jsonResult=JSON.toJSONString(messid);
 		     response.getWriter().write(jsonResult);
 		}
@@ -119,12 +120,21 @@ public class MessageAction extends HttpServlet {
 		{
 			WlrBiBasedService service=new WlrBiBasedService();
 			 String username=request.getParameter("username");
-			 List<String> adviser=service.getRecivers(username);
-			 int count=adviser.size();
-		     HashMap<String, Object> map=new HashMap<>();
-		     map.put("count", count);
-		     map.put("data", adviser);
-		     String jsonResult=JSON.toJSONString(map);
+			 List<BiBased> list=service.getMyAllStudent(username);
+			 //int count=student.size();
+		     //HashMap<String, string> map=new HashMap<>();
+		    // map.put("count", count);
+		     //map.put("data", student);
+		     String jsonResult=JSON.toJSONString(list);
+		     response.getWriter().write(jsonResult);
+		}
+		else if(flag.equals("selectTeaAlready"))
+		{
+			WlrBiBasedService service=new WlrBiBasedService();
+			 String username=request.getParameter("username");
+			 List<BiBased> list=service.getMyAllStudent(username);
+			 int count=list.size();
+		     String jsonResult=JSON.toJSONString(count);
 		     response.getWriter().write(jsonResult);
 		}
 			

@@ -52,6 +52,7 @@
       mini.parse();
       var grid = mini.get("datagrid1");
       var adviser=null;
+      var select=0;
       if(Request["userdegree"]=="学生")
   	{
     	  var uobj=document.getElementById("stunot");
@@ -62,13 +63,11 @@
     	  {
       	 $.ajax({            	
              url: "/WlrBiBased/MessageAction",
-             data:{username:Request["username"],flag:"selectedAdviserAlready"},
+             data:{username:Request["username"],flag:"selectTeaAlready"},
              cache: false,
              success: function (text) {
             	 var jsonData = JSON.parse(text); 
-            	 select=jsonData.count;
-            	 adviser=jsonData.adviser;
-              	 alert("adviser  "+adviser);
+            	 select=jsonData;
           	   if(select>0)
         	   {
           		 grid.load({"flag":"selectMessage","username":Request["username"]});
@@ -86,7 +85,7 @@
              }
          });
     	  }
-      var select=0;
+     
       //判断学生是否已经选中题目，来加载数据
       function selectedAlready()
       {

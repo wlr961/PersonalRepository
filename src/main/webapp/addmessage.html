@@ -10,11 +10,11 @@
 <body>
  <form id="form1" method="post">
         <div style="width:80%;margin-right:10%;margin-left:10%;margin-top:20px;">
-         <table> 
+         <table id="stunot"> 
                  <tr>
                 <td >收件人：</td>
                 <td colspan="3">    
-                    <input name="student" class="mini-combobox" alwaysView="true"  data="datalist" />
+                    <input id="reciver" name="student" class="mini-combobox" alwaysView="true"  textField="student" valueField="student"  />
                 </td>
             </tr>       
             </table>                                    
@@ -41,6 +41,14 @@ if(url.indexOf("?")!=-1)
 	} 
 	//将控件转换为mini控件
    mini.parse();
+	var recivercomb=mini.get("reciver");
+	recivercomb.load("/WlrBiBased/MessageAction?flag=selectedAdviserAlready&username="+Request["username"])
+	
+      if(Request["userdegree"]=="学生")
+  	{
+    	  var uobj=document.getElementById("stunot");
+          uobj.style.display="none";
+  	}
 	var adata=new Object();
    function SetData(data) {    
            //跨页面传递的数据对象，克隆后才可以安全使用
@@ -52,22 +60,48 @@ if(url.indexOf("?")!=-1)
    	 var form = new mini.Form("#form1");        
         var data = form.getData();     
         //获取表单提交的数据
-        var json = mini.encode(data);  
-        $.ajax({
-            url: "/WlrBiBased/MessageAction",
-            type: "post",
-            data: { submitData: json,username:Request["username"],flag:"addMessage",adviser:adata.adviser},
-            success: function (text) {
-               messid=JSON.parse(text);
-               mini.alert("success","tip",function(){ 
-            	   CloseWindow("save");
-            	   });
-               ajaxFileUploadPaper();
-            },
-            error: function (jqXHR, textStatus, errorThrown) {
-           	 mini.alert("failure","tip",function(){});
-            }
-        });
+        var json = mini.encode(data); 
+        //var student=null;
+        if(Request["userdegree"]=="学生")
+        	{
+            $.ajax({
+                url: "/WlrBiBased/MessageAction",
+                type: "post",
+                data: { submitData: json,username:Request["username"],flag:"addMessage",adviser:adata.adviser},
+                success: function (text) {
+                   messid=JSON.parse(text);
+                   mini.alert("success","tip",function(){ 
+                	   CloseWindow("save");
+                	   });
+                   ajaxFileUploadPaper();
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+               	 mini.alert("failure","tip",function(){});
+                }
+            });
+        	
+        	}
+        else
+        	{
+        	var student=mini.get("reciver").getValue();
+            $.ajax({
+                url: "/WlrBiBased/MessageAction",
+                type: "post",
+                data: { submitData: json,username:Request["username"],flag:"addMessage",acceptid:student},
+                success: function (text) {
+                   messid=JSON.parse(text);
+                   mini.alert("success","tip",function(){ 
+                	   CloseWindow("save");
+                	   });
+                   ajaxFileUploadPaper();
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+               	 mini.alert("failure","tip",function(){});
+                }
+            });
+        	}
+    	 
+ 
       
    }
    function ajaxFileUploadPaper()
