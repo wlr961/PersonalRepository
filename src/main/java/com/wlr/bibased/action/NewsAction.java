@@ -226,6 +226,15 @@ public class NewsAction extends HttpServlet {
 
 			out.close();
 		}
+		else if(flag.equals("getAllNewsAction"))
+		{
+			 WlrBiBasedService service=new WlrBiBasedService();
+			 List<News> list=null;
+			 list=service.getAllNewsByWhere();
+			 String jsonResult=JSON.toJSONStringWithDateFormat(list, "yyyy-MM-dd");
+		     response.getWriter().write(jsonResult);
+		}
+		
 	}
 
 	/**

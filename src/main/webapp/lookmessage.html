@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+		 <script src="assets/js/jquery-1.10.2.js"></script>    
+         <script src="assets/js/bootstrap.min.js"></script>  
+         <script src="assets/js/jquery.metisMenu.js"></script>   
+         <script src="assets/js/custom.js"></script>
+         <script type="text/javascript" src="scripts/boot.js"></script>
+</head>
+<body>
+ <form id="form1" method="post"> 
+    <!-- 数据区 -->
+        <fieldset style="border:solid 1px #aaa;padding:3px;">
+            <legend >详细信息</legend>
+            <div style="padding:5px;">
+        <table> 
+            <tr>
+                <td style="width:70px;">发送者:</td>
+                <td style="width:150px;">    
+                    <input name="sendid" class="mini-textbox" required="true" enable="false"/>
+                </td>                
+            </tr>        
+            <tr>
+                <td style="width:70px;">发送时间:</td>
+                <td style="width:150px;">    
+                    <input name="senddate" class="mini-textbox" required="true"/>
+                </td>                  
+            </tr> 
+            
+            
+            <tr>
+             <td style="width:70px;">详细内容：</td>
+                 <td style="width:300px;">    
+                    <input name="content" class="mini-textarea" style="width:300px;height:200px""/>
+                </td>         
+            </tr>     
+            
+             <tr>  
+             <td >附件:</td>
+                <td id="messname"> 
+                   
+                </td>    
+            </tr>  
+        </table>            
+            </div>
+        </fieldset>
+               
+    </form>
+    <form id="DownloadAction"  method="post"></form> 
+<script type="text/javascript">
+    mini.parse();
+    var form = new mini.Form("form1");   
+    function SetData(data) {    
+    	
+        if (data.action == "look") {
+            //跨页面传递的数据对象，克隆后才可以安全使用
+            data = mini.clone(data);
+            $.ajax({            	
+                url: "/WlrBiBased/MessageAction",
+                data:{id:data.id,username:data.username,flag:"lookMess"},
+                cache: false,
+                success: function (text) {
+                    var o = mini.decode(text);
+                    o.senddate=mini.formatDate(o.senddate, 'yyyy-MM-dd HH:mm:ss')
+                    form.setData(o);
+                    if(o.appendixname!=null)
+                    	{
+                    	  $("#messname").append('<a class="Edit_Button" href="javascript:downpaper(\''+o.id+'\')" style="opacity: 1;">'+o.appendixname+'</a>');
+                    	}
+                  
+                    form.setChanged(false);    
+                    
+                }
+            });
+    
+     }
+    }
+    function downpaper(messid)
+    {
+    	var o=document.getElementById("DownloadAction");
+    	o.action="/WlrBiBased/FileLoadAction?messid="+messid+"&flag=downMess";
+    	o.submit();
+    } 
+    function CloseWindow(action) {            
+        if (action == "close" && form.isChanged()) {
+            if (confirm("数据被修改了，是否先保存？")) {
+                return false;
+            }
+        }
+        if (window.CloseOwnerWindow) return window.CloseOwnerWindow(action);
+        else window.close();            
+    }
+    </script>
+</body>
+</html>

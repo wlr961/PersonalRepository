@@ -29,7 +29,6 @@
     		  Request[strs[i].split("=")[0]]=unescape(strs[i].split("=")[1]);
     		}
     	} 
-    alert("/WlrBiBased/NewsAction?username="+Request["username"]+"&flag=addNews");
     function ajaxFileUp() {
 		$.ajaxFileUpload({
 			url : "/WlrBiBased/NewsAction?username="+Request["username"]+"&flag=addNews",

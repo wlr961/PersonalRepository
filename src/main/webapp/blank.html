@@ -29,69 +29,16 @@
   <div style="color: white;
 padding: 15px 50px 5px 50px;
 float: right;
-font-size: 16px;"> <text id="nowTime"></text>  &nbsp; <a href="login.html" class="btn btn-danger square-btn-adjust">Logout</a> </div>
+font-size: 16px;"> <text id="nowTime"></text> &nbsp; <a href="login.html" class="btn btn-danger square-btn-adjust">Logout</a> </div>
         </nav>   
            <!-- /. NAV TOP  -->
                 <nav class="navbar-default navbar-side" role="navigation">
             <div class="sidebar-collapse">
-                <ul id="menu" class="nav" id="main-menu">
+                <ul id="menu" class="nav" >
 				<li class="text-center">
                     <img src="assets/img/find_user.png" class="user-image img-responsive"/>
 					</li>									
-                    <li>
-                        <a  href="javascript:addTab1()"><i class="fa fa-dashboard fa-3x"></i> 个人资料</a>
-                    </li>
-                      <li>
-                        <a  href="javascript:addTab2()"><i class="fa fa-desktop fa-3x"></i> 账户管理</a>
-                    </li>
-                    <li>
-                        <a  href="javascript:addTab3()"><i class="fa fa-qrcode fa-3x"></i> 权限配置</a>
-                    </li>
-						   <li  >
-                        <a  href="javascript:addTab4()"><i class="fa fa-bar-chart-o fa-3x"></i>最新动态管理</a>
-                    </li>	
-                      <li  >
-                        <a  href="javascript:addTab6()"><i class="fa fa-table fa-3x"></i> 选题发布</a>
-                    </li>
-                    <li  >
-                        <a  href="javascript:addTab7()"><i class="fa fa-edit fa-3x"></i> 选题 </a>
-                    </li>				
-					<li  >
-                        <a   href="javascript:addTab8()"><i class="fa fa-bolt fa-3x"></i> 学生页面</a>
-                    </li>	
-					                   
-                   <!--  多级菜单暂时不用 
-                   <li>
-                        <a href="#"><i class="fa fa-sitemap fa-3x"></i> Multi-Level Dropdown<span class="fa arrow"></span></a>
-                        <ul class="nav nav-second-level">
-                            <li>
-                                <a href="#">Second Level Link</a>
-                            </li>
-                            <li>
-                                <a href="#">Second Level Link</a>
-                            </li>
-                            <li>
-                                <a href="#">Second Level Link<span class="fa arrow"></span></a>
-                                <ul class="nav nav-third-level">
-                                    <li>
-                                        <a href="#">Third Level Link</a>
-                                    </li>
-                                    <li>
-                                        <a href="#">Third Level Link</a>
-                                    </li>
-                                    <li>
-                                        <a href="#">Third Level Link</a>
-                                    </li>
-
-                                </ul>
-                               
-                            </li>
-                        </ul>
-                      </li>  
-                      -->
-                  <li  >
-                        <a class="active-menu"  href="javascript:addTab5()"><i class="fa fa-square-o fa-3x"></i> 消息管理</a>
-                    </li>	
+             	
                 </ul>
                
             </div>
@@ -103,7 +50,7 @@ font-size: 16px;"> <text id="nowTime"></text>  &nbsp; <a href="login.html" class
                 <div class="row">
                     <div class="col-md-12">
                      <h2>Blank Page</h2>   
-                        <h5>Welcome Jhon Deo , Love to see you back. </h5>                      
+                        <h5 id="title">Welcome Jhon Deo , Love to see you back. </h5>                      
                     </div>
                 </div>
                  <!-- /. ROW  -->
@@ -145,6 +92,7 @@ font-size: 16px;"> <text id="nowTime"></text>  &nbsp; <a href="login.html" class
     		  Request[strs[i].split("=")[0]]=unescape(strs[i].split("=")[1]);
     		}
     	} 
+    //获取用户名
 	 $.ajax({            	
          url: "/WlrBiBased/UsersAction",
          data:{username:Request["username"],userdegree:Request["userdegree"],flag:"selectInfoUser"},
@@ -158,21 +106,37 @@ font-size: 16px;"> <text id="nowTime"></text>  &nbsp; <a href="login.html" class
         	 mini.alert("failure","tip",function(){});
          }
      });
-    $("#degree").text("Degree "+Request["userdegree"]);    
-    $("#nowTime").text("Last access :"+new Date().toLocaleDateString()); 
-       
-    var uobj=document.getElementById("menu");
-    var uli=uobj.getElementsByTagName("li");
-    for (var i = 1; i <uli.length; i++) {
-    	uli[i].style.display="none";  
-    	}
-   
+    //设置用户等级
+    $("#degree").text("Degree "+Request["userdegree"]);
+    //设置当前时间
+    $("#nowTime").text("Last access :"+new Date().toLocaleDateString());  
+     //获取菜单的跳转页  
+    var items;
+    $.ajax({            	
+        url: "/WlrBiBased/data/countrys.txt",
+        data:{},
+        cache: false,
+        success: function (text) {
+       	items=mini.decode(text);
+        }
+    });
+    //分别加载菜单项目
     if(Request["userdegree"]=="管理员")
     {
-    for (var i = 0; i <uli.length; i++) {
-    	uli[i].style.display="";  
-    	}
+        $.ajax({            	
+            url: "/WlrBiBased/data/countrys.txt",
+            data:{},
+            cache: false,
+            success: function (text) {
+           	items=mini.decode(text);
+           	for(var i=0;i<items.length;i++)
+       		{
+       		$("#menu").append('<li><a  href="javascript:addTab('+'\''+items[i].text+'\''+','+'\''+items[i].myhref+'\''+')"><i class="'+items[i].myclass+'"></i>'+ items[i].text+'</a></li>');
+       		}
+            }
+        });
     }
+    
     if(Request["userdegree"]=="学生")
     {
     	 $.ajax({            	
@@ -181,8 +145,8 @@ font-size: 16px;"> <text id="nowTime"></text>  &nbsp; <a href="login.html" class
              cache: false,
              success: function (text) {
             	 var o = mini.decode(text);
-            	 for (var i = 0; i <o.length; i++) {
-            	    	uli[parseInt(o[i].id)].style.display="";  
+            	 for (var i = 0; i <o.length; i++) {             	    	
+            	   		$("#menu").append('<li><a  href="javascript:addTab('+'\''+items[parseInt(o[i].id)-1].text+'\''+','+'\''+items[parseInt(o[i].id)-1].myhref+'\''+')"><i class="'+items[parseInt(o[i].id)-1].myclass+'"></i>'+ items[parseInt(o[i].id)-1].text+'</a></li>');
             	    	}                  
              }
          });
@@ -196,7 +160,7 @@ font-size: 16px;"> <text id="nowTime"></text>  &nbsp; <a href="login.html" class
              success: function (text) {
                  var o = mini.decode(text);
                  for (var i = 0; i <o.length; i++) {
-         	    	uli[parseInt(o[i].id)].style.display="";  
+                	 $("#menu").append('<li><a  href="javascript:addTab('+'\''+items[parseInt(o[i].id)-1].text+'\''+','+'\''+items[parseInt(o[i].id)-1].myhref+'\''+')"><i class="'+items[parseInt(o[i].id)-1].myclass+'"></i>'+ items[parseInt(o[i].id)-1].text+'</a></li>');
          	    	}  
                                     
              }
@@ -208,123 +172,32 @@ font-size: 16px;"> <text id="nowTime"></text>  &nbsp; <a href="login.html" class
     mini.parse();
     var tabs = mini.get("mainTabs");
     var index = 4;
-    function addTab1() {
-        //add tab
-        var i = index++;        
-        var tab = { title: "tab" + i, url: 'personalinfo.html?username='+escape(Request["username"])+'&usercode='+escape(Request["usercode"])+'&userdegree='+escape(Request["userdegree"]), showCloseButton: true };
-        tab.ondestroy = function (e) {
-            var tabs = e.sender;
-            var iframe = tabs.getTabIFrameEl(e.tab);
-            var pageReturnData = iframe.contentWindow.getData ? iframe.contentWindow.getData() : "";
-            console.log(e.tab.removeAction + " : " + pageReturnData);            
-        }
-        tabs.addTab(tab);
-        tabs.activeTab(tab);
-
-    }  
-    function addTab2() {
-        //add tab
-        var i = index++;        
-        var tab = { title: "tab" + i, url: 'accountlist.html', showCloseButton: true };
-        tab.ondestroy = function (e) {
-            var tabs = e.sender;
-            var iframe = tabs.getTabIFrameEl(e.tab);
-            var pageReturnData = iframe.contentWindow.getData ? iframe.contentWindow.getData() : "";
-            console.log(e.tab.removeAction + " : " + pageReturnData);            
-        }
-        tabs.addTab(tab);
-        tabs.activeTab(tab);
-
+    var tabArray=new Object();
+    //添加选项卡
+    function addTab(mytitle,myhref)
+    {
+    	
+    	if(tabArray[mytitle])
+    		{
+    		tabs.activeTab(tabArray[mytitle]);
+    		}
+    	else
+    		{
+    	 var tab = { title: mytitle, url: myhref+'?username='+escape(Request["username"])+'&usercode='+escape(Request["usercode"])+'&userdegree='+escape(Request["userdegree"]), showCloseButton: true };
+         tab.ondestroy = function (e) {
+             var tabs = e.sender;
+             var iframe = tabs.getTabIFrameEl(e.tab);
+             var pageReturnData = iframe.contentWindow.getData ? iframe.contentWindow.getData() : "";
+             console.log(e.tab.removeAction + " : " + pageReturnData);            
+         }
+         tabs.addTab(tab);
+         tabs.activeTab(tab);
+         //存储tab
+         tabArray[mytitle]=tab;
+    		}
     }
     
-    function addTab3() {
-        //add tab
-        var i = index++;        
-        var tab = { title: "tab" + i, url: 'degree.html', showCloseButton: true };
-        tab.ondestroy = function (e) {
-            var tabs = e.sender;
-            var iframe = tabs.getTabIFrameEl(e.tab);
-            var pageReturnData = iframe.contentWindow.getData ? iframe.contentWindow.getData() : "";
-            console.log(e.tab.removeAction + " : " + pageReturnData);            
-        }
-        tabs.addTab(tab);
-        tabs.activeTab(tab);
-
-    }   
-    
-    function addTab4() {
-        //add tab
-        var i = index++;        
-        var tab = { title: "tab" + i, url: 'newslist.html', showCloseButton: true };
-        tab.ondestroy = function (e) {
-            var tabs = e.sender;
-            var iframe = tabs.getTabIFrameEl(e.tab);
-            var pageReturnData = iframe.contentWindow.getData ? iframe.contentWindow.getData() : "";
-            console.log(e.tab.removeAction + " : " + pageReturnData);            
-        }
-        tabs.addTab(tab);
-        tabs.activeTab(tab);
-
-    }  
-    
-    function addTab5() {
-        //add tab
-        var i = index++;        
-        var tab = { title: "tab" + i, url: 'messagelist.html?username='+escape(Request["username"]), showCloseButton: true };
-        tab.ondestroy = function (e) {
-            var tabs = e.sender;
-            var iframe = tabs.getTabIFrameEl(e.tab);
-            var pageReturnData = iframe.contentWindow.getData ? iframe.contentWindow.getData() : "";
-            console.log(e.tab.removeAction + " : " + pageReturnData);            
-        }
-        tabs.addTab(tab);
-        tabs.activeTab(tab);
-
-    }   
-    
-    function addTab6() {
-        //add tab
-        var i = index++;        
-        var tab = { title: "tab" + i, url: 'issuesmanage.html?username='+escape(Request["username"]), showCloseButton: true };
-        tab.ondestroy = function (e) {
-            var tabs = e.sender;
-            var iframe = tabs.getTabIFrameEl(e.tab);
-            var pageReturnData = iframe.contentWindow.getData ? iframe.contentWindow.getData() : "";
-            console.log(e.tab.removeAction + " : " + pageReturnData);            
-        }
-        tabs.addTab(tab);
-        tabs.activeTab(tab);
-
-    } 
-    
-    function addTab7() {
-        //add tab
-        var i = index++;        
-        var tab = { title: "tab" + i, url: 'selectbibased.html?username='+escape(Request["username"])+'&usercode='+escape(Request["usercode"])+'&userdegree='+escape(Request["userdegree"]), showCloseButton: true };
-        tab.ondestroy = function (e) {
-            var tabs = e.sender;
-            var iframe = tabs.getTabIFrameEl(e.tab);
-            var pageReturnData = iframe.contentWindow.getData ? iframe.contentWindow.getData() : "";
-            console.log(e.tab.removeAction + " : " + pageReturnData);            
-        }
-        tabs.addTab(tab);
-        tabs.activeTab(tab);
-
-    }  
-    function addTab8() {
-        //add tab
-        var i = index++;        
-        var tab = { title: "tab" + i, url: 'student.html?username='+escape(Request["username"])+'&usercode='+escape(Request["usercode"])+'&userdegree='+escape(Request["userdegree"]), showCloseButton: true };
-        tab.ondestroy = function (e) {
-            var tabs = e.sender;
-            var iframe = tabs.getTabIFrameEl(e.tab);
-            var pageReturnData = iframe.contentWindow.getData ? iframe.contentWindow.getData() : "";
-            console.log(e.tab.removeAction + " : " + pageReturnData);            
-        }
-        tabs.addTab(tab);
-        tabs.activeTab(tab);
-
-    }
+ 
     </script>
     
    

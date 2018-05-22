@@ -1,10 +1,10 @@
 [
-    { "id": "1", "text": "个人资料","pageurl":"personalinfo.html","picture":"fa fa-dashboard fa-3x" },
-    { "id": "2", "text": "账户管理","pageurl":"accountlist.html","picture":"fa fa-desktop fa-3x" },
-    { "id": "3", "text": "权限配置","pageurl":"degree.html","picture":"fa fa-qrcode fa-3x" },
-    { "id": "4", "text": "最新动态管理","pageurl":"newslist.html","picture":"fa fa-bar-chart-o fa-3x" },
-    { "id": "5", "text": "选题发布","pageurl":"issuesmanage.html","picture":"fa fa-table fa-3x" },
-    { "id": "6", "text": "选题","pageurl":"selectbibased.html","picture":"fa fa-edit fa-3x" },
-	{ "id": "7", "text": "学生页面","pageurl":"student.html","picture":"fa fa-bolt fa-3x" },
-	{ "id": "8", "text": "信息管理","pageurl":"messagelist.html","picture":"fa fa-square-o fa-3x" }
+    { "id": "1", "text": "个人资料","myhref":"personalinfo.html","myclass":"fa fa-dashboard fa-3x" },
+    { "id": "2", "text": "账户管理","myhref":"accountlist.html","myclass":"fa fa-desktop fa-3x" },
+    { "id": "3", "text": "权限配置","myhref":"degree.html","myclass":"fa fa-qrcode fa-3x" },
+    { "id": "4", "text": "最新动态管理","myhref":"newslist.html","myclass":"fa fa-bar-chart-o fa-3x" },
+    { "id": "5", "text": "选题发布","myhref":"issuesmanage.html","myclass":"fa fa-table fa-3x" },
+    { "id": "6", "text": "选题","myhref":"selectbibased.html","myclass":"fa fa-edit fa-3x" },
+	{ "id": "7", "text": "学生页面","myhref":"student.html","myclass":"fa fa-bolt fa-3x" },
+	{ "id": "8", "text": "信息管理","myhref":"messagelist.html","myclass":"fa fa-square-o fa-3x" }
 ]

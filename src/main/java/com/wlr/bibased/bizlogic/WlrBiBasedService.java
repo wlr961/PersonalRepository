@@ -19,14 +19,41 @@ import com.wlr.bibased.utils.JdbcUtils;
 public class WlrBiBasedService {
 	
 	WlrBiBasedDao Dao=new WlrBiBasedDao();	
-	
+	public List<String> getRecivers(String username)
+	{
+		return Dao.getRecivers(username);
+	}
+	public Message getMessInfo(int id,String username)
+	{
+		return Dao.getMessInfo(id,username);
+	}
+	public boolean delMessage(int messid)
+	{
+		return Dao.delMessage(messid);
+	}
+	public int addMessage(String username,String adviser,String content)
+	{
+		return Dao.addMessage(username, adviser, content);
+	}
+	public List<News> getAllNewsByWhere()
+	{
+		return Dao.getAllNewsByWhere();
+	}
+	public String selectedAdvserAlready(String username)
+	{
+		return Dao.selectedAdvserAlready(username);
+	}
+	public List<BiBased> getManBiBasedByWhere(int pageSize,int pageIndex,String adviser,String bibtitle,String username)
+	{
+		return Dao.getManBiBasedByWhere(pageSize,pageIndex,adviser,bibtitle,username);
+	}
 	public boolean addSelectStuBiased(BiBased bibased)
 	{
 		return Dao.addSelectStuBiased(bibased);
 	}
-	public List<BiBased> getTeaBiBasedByWhere(int pageSize,int pageIndex,String adviser)
+	public List<BiBased> getTeaBiBasedByWhere(int pageSize,int pageIndex,String bibtitle,String username)
 	{
-		return Dao.getTeaBiBasedByWhere(pageSize, pageIndex, adviser);
+		return Dao.getTeaBiBasedByWhere(pageSize, pageIndex,bibtitle,username);
 	}
 	public int certenStuBiBased(String username,String bibno)
 	{
@@ -44,9 +71,9 @@ public class WlrBiBasedService {
 	{
 		return Dao.getSomeMessageByWhere(pageSize, pageIndex, sendid,acceptid);
 	}
-	public List<Message> getAllMessageByWhere(int pageSize,int pageIndex,String username,String sendid,String acceptid)
+	public List<Message> getAllMessageByWhere(int pageSize,int pageIndex,String username,String sendid)
 	{
-		return Dao.getAllMessageByWhere(pageSize, pageIndex, username,sendid,acceptid);
+		return Dao.getAllMessageByWhere(pageSize, pageIndex, username,sendid);
 	}
 	/**
 	 * @param username
@@ -142,12 +169,6 @@ public class WlrBiBasedService {
 		 return Dao.getAllChooseBiBasedByWhere(pageSize, pageIndex, adviser, bibtitle,username,selected);
 	 }
 	
-	 /*2018
-	 public boolean selectBiBased(String bibno,String student)
-	 {
-		 return Dao.selectBiBased(bibno, student);
-	 }
-	*/ 
 	 public boolean unSelectBiBased(String bibno,String student)
 	 {
 		 return Dao.unSelectBiBased(bibno, student);

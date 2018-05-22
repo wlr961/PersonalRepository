@@ -70,8 +70,13 @@ public class FileUpAction extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		String flag=request.getParameter("flag");
-
+		
+            String tablename=request.getParameter("tablename");
+            String contentname=request.getParameter("contentname");
+            String contentfilename=request.getParameter("contentfilename");
+            String tableid=request.getParameter("tableid");
+            
+            
 			String bibno=request.getParameter("bibno");
 	        DiskFileItemFactory factory = new DiskFileItemFactory();
 			// 如果没以下两行设置的话，上传大的 文件 会占用 很多内存，
@@ -106,30 +111,16 @@ public class FileUpAction extends HttpServlet {
 				
 				// 真正写到磁盘上
 				item.write(new File(PATH_FOLDER, saveName)); 
-				if(flag.equals("paperUp"))
-				{
-				Connection conn=JdbcUtils.getConn();
-				String sql="update bibased set paper=?,papername=? where bibno=?";
-				java.sql.PreparedStatement pst =conn.prepareStatement(sql);
-				FileInputStream in =new FileInputStream(file);
-				pst.setBlob(1, in);
-				pst.setString(2, filename);
-				pst.setString(3, bibno);
-				pst.executeUpdate();			
-					
-				}
-				else if(flag.equals("workUp"))
-				{
+	
 					Connection conn=JdbcUtils.getConn();
-					String sql="update bibased set work=?,workname=? where bibno=?";
+					String sql="update "+tablename+" set "+contentname+"=?,"+contentfilename+"=? where "+tableid+"=?";
 					java.sql.PreparedStatement pst =conn.prepareStatement(sql);
 					FileInputStream in =new FileInputStream(file);
 					pst.setBlob(1, in);
 					pst.setString(2, filename);
 					pst.setString(3, bibno);
-					pst.executeUpdate();			
-						
-				}
+					pst.executeUpdate();		
+					
 				PrintWriter writer = response.getWriter();			
 				writer.print("{");
 				writer.print("msg:\"文件大小:"+item.getSize()+",文件名:"+filename+"\"");

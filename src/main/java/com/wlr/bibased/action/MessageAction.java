@@ -14,6 +14,7 @@ import com.alibaba.fastjson.JSON;
 import com.wlr.bibased.bizlogic.WlrBiBasedService;
 import com.wlr.bibased.model.BiBased;
 import com.wlr.bibased.model.Message;
+import com.wlr.bibased.model.User;
 
 /**
  * Servlet implementation class MessageAction
@@ -42,13 +43,11 @@ public class MessageAction extends HttpServlet {
 			 List<Message> list=null;
 			 int pageSize=Integer.parseInt(request.getParameter("pageSize"));
 		     int pageIndex=Integer.parseInt(request.getParameter("pageIndex"));
-		     //String username=request.getParameter("username");
-		     int total= service.getTotal("message");
+		    
 		     String username=request.getParameter("username");
-		     String sendid=request.getParameter("key1");
-		     String acceptid=request.getParameter("key2");
-		     //根据用户名获取bibased的记录的集合
-		     list=service.getAllMessageByWhere(pageSize,pageIndex,username,sendid,acceptid);
+		     String sendid=request.getParameter("sendid");
+		     list=service.getAllMessageByWhere(pageSize,pageIndex,username,sendid);
+		     int total= list.size();
 		     HashMap<String, Object> map=new HashMap<>();
 		     map.put("total", total);
 		     map.put("data", list);
@@ -72,6 +71,64 @@ public class MessageAction extends HttpServlet {
 		     String jsonResult=JSON.toJSONStringWithDateFormat(map, "yyyy-MM-dd-hh-mm-ss");
 		     response.getWriter().write(jsonResult);
 		}
+		else if(flag.equals("selectedAlready"))
+		{
+			WlrBiBasedService service=new WlrBiBasedService();
+			 String username=request.getParameter("username");
+			 int count=service.selectedAlready(username);
+			 String adviser=service.selectedAdvserAlready(username);
+		     HashMap<String, Object> map=new HashMap<>();
+		     map.put("count", count);
+		     map.put("adviser", adviser);
+		     String jsonResult=JSON.toJSONString(map);
+		     response.getWriter().write(jsonResult);
+		}
+		else if(flag.equals("addMessage"))
+		{
+			WlrBiBasedService service=new WlrBiBasedService();
+			 String username=request.getParameter("username");
+			 String json2Obj=request.getParameter("submitData");
+			 Message mess=JSON.parseObject(json2Obj,Message.class);
+			 String adviser=request.getParameter("adviser");
+			 int messid=service.addMessage(username, adviser, mess.getContent());
+			 String jsonResult=JSON.toJSONString(messid);
+		     response.getWriter().write(jsonResult);
+		}
+
+		else if(flag.equals("delMessage"))
+		{
+			WlrBiBasedService service=new WlrBiBasedService();
+			String str=request.getParameter("data");
+			String[] strs=str.split(",");
+			for(int i=0;i<strs.length;i++)
+			{
+				service.delMessage(Integer.parseInt(strs[i]));
+			}
+			
+		}
+		else if(flag.equals("lookMess"))
+		{
+			WlrBiBasedService service=new WlrBiBasedService();
+			String messid=request.getParameter("id");
+			String username=request.getParameter("username");
+			Message mess =service.getMessInfo(Integer.parseInt(messid),username);
+			String jsonResult=JSON.toJSONStringWithDateFormat(mess, "yyyy-MM-dd HH:mm:ss");
+		    response.getWriter().write(jsonResult);
+		}
+		else if(flag.equals("selectedAdviserAlready"))
+		{
+			WlrBiBasedService service=new WlrBiBasedService();
+			 String username=request.getParameter("username");
+			 List<String> adviser=service.getRecivers(username);
+			 int count=adviser.size();
+		     HashMap<String, Object> map=new HashMap<>();
+		     map.put("count", count);
+		     map.put("data", adviser);
+		     String jsonResult=JSON.toJSONString(map);
+		     response.getWriter().write(jsonResult);
+		}
+			
+		
 	}
 
 	/**

@@ -9,6 +9,13 @@ public class Message {
 	private String content;
 	private Date senddate;
 	private String appendixname;
+	private int readed;
+	public int getReaded() {
+		return readed;
+	}
+	public void setReaded(int readed) {
+		this.readed = readed;
+	}
 	public String getAppendixname() {
 		return appendixname;
 	}

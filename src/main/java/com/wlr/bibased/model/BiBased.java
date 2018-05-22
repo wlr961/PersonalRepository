@@ -12,6 +12,13 @@ public class BiBased {
 	private String workname;
 	private String zgrade;
 	private String fgrade;
+	private int center;
+	public int getCenter() {
+		return center;
+	}
+	public void setCenter(int center) {
+		this.center = center;
+	}
 	public String getBibno() {
 		return bibno;
 	}

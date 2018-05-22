@@ -45,8 +45,8 @@
                     <td >课题内容：</td>
                 </tr>
                  <tr>      
-                <td colspan="10" rowspan="10">    
-                    <input name="bibcontent" class="mini-textarea" style="width:1100px;height:900px" />
+                <td colspan="12" rowspan="5">    
+                    <input name="bibcontent" class="mini-textarea" style="width:1100px;height:400px" />
                 </td>
             </tr>        
             </table>
@@ -96,7 +96,8 @@
     
     function ajaxFileUploadPaper() {
 		$.ajaxFileUpload({
-			url : '/WlrBiBased/FileUpAction?bibno='+textcopy.bibno+'&flag=paperUp',
+			url : '/WlrBiBased/FileUpAction?bibno='+textcopy.bibno+'&tablename=bibased&contentname=paper'
+			+'&contentfilename=papername&tableid=bibno',
 			secureuri : false,
 			fileElementId : 'fileToUploadPaper',
 			dataType : 'json',
@@ -115,7 +116,8 @@
     
     function ajaxFileUploadWork() {
 		$.ajaxFileUpload({
-			url : '/WlrBiBased/FileUpAction?bibno='+textcopy.bibno+'&flag=workUp',
+			url : '/WlrBiBased/FileUpAction?bibno='+textcopy.bibno+'&tablename=bibased&contentname=work'
+					+'&contentfilename=workname&tableid=bibno',
 			secureuri : false,
 			fileElementId : 'fileToUploadWork',
 			data : {},

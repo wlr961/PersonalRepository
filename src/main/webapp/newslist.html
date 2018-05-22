@@ -83,7 +83,14 @@
     	var record = e.record;
     	var uid = record._uid;
     	var rowIndex = e.rowIndex;
-    	var s = '&nbsp<a class="Edit_Button" href="javascript:remove()">删除</a> &nbsp';
+    	if(Request["userdegree"]=="学生")
+    		{
+    		var s='';
+    		}
+    	else
+    		{
+        	var s = '&nbsp<a class="Edit_Button" href="javascript:remove()">删除</a> &nbsp';
+    		}
     	return s;
     }
   
@@ -95,7 +102,6 @@
     	var s = '<a class="Edit_Button" href="javascript:downpaper()">下载</a>&nbsp';
     	return s;
     }
-    //2018
     function add()
     {
  	   mini.open({

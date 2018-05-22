@@ -8,7 +8,6 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Date;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -82,8 +81,6 @@ public class FileLoadAction extends HttpServlet {
 				e.printStackTrace();
 			}
 						
-			Date date = new Date();
-			long time = date.getTime();
 			// 设置响应头的MIME类型
 			response.setContentType("application/force-download");
 			response.setHeader("Content-Length",String.valueOf(in.available()));
@@ -139,9 +136,63 @@ public class FileLoadAction extends HttpServlet {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-						
-			Date date = new Date();
-			long time = date.getTime();
+					
+			// 设置响应头的MIME类型
+			response.setContentType("application/force-download");
+			response.setHeader("Content-Length",String.valueOf(in.available()));
+			response.setHeader("Content-Disposition", "attachment;filename=" + new String(workName.getBytes("utf-8"),"gb2312"));		 
+			int i = 0;
+			byte[] b = new byte[1024];
+			while ((i = in.read(b)) != -1)
+			{
+
+			     out.write(b, 0, i);
+			}
+			in.close();
+
+			out.close();
+		}
+		else if(flag.equals("downMess"))
+		{
+			String messid=request.getParameter("messid");
+			Blob workBlob=null;
+			String workName=null;
+			OutputStream out = response.getOutputStream();	
+			Connection conn=JdbcUtils.getConn();
+			Statement st=null;
+			ResultSet rs=null;
+			try {
+				st = conn.createStatement();
+				rs =st.executeQuery("select appendix,appendixname from message where id="+Integer.parseInt(messid));
+				while(rs.next())
+				{
+					workBlob=rs.getBlob("appendix");
+					workName=rs.getString("appendixname");
+				}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			finally
+			{
+				try {
+					rs.close();
+					st.close();
+					conn.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}		
+			}
+			
+			InputStream in=null;
+			try {
+				in = workBlob.getBinaryStream();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+				
 			// 设置响应头的MIME类型
 			response.setContentType("application/force-download");
 			response.setHeader("Content-Length",String.valueOf(in.available()));

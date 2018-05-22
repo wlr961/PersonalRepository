@@ -35,6 +35,7 @@ public class ChooseBiBasedAction extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		String flag=request.getParameter("flag");
+		//学生的选课题列表
 		if(flag.equals("selectBiBased"))
 		{
 			 WlrBiBasedService service=new WlrBiBasedService();
@@ -42,14 +43,13 @@ public class ChooseBiBasedAction extends HttpServlet {
 			 int pageSize=Integer.parseInt(request.getParameter("pageSize"));
 		     int pageIndex=Integer.parseInt(request.getParameter("pageIndex"));
 		     //获取bibased表的记录总数
-		     String username=request.getParameter("student");
+		     String username=request.getParameter("username");
 		     String selected=request.getParameter("selected");
-		     int total= service.getTotal("bibased");
-		   //  int total= service.getTotal("bibased",username);
 		     String adviser=request.getParameter("adviser");
 		     String bibtitle=request.getParameter("bibtitle");	
 		     //获取页面要显示的bibased数据
 	         list=service.getAllChooseBiBasedByWhere(pageSize, pageIndex, adviser, bibtitle,username,selected);
+	         int total= list.size();
 		     HashMap<String, Object> map=new HashMap<>();
 		     map.put("total", total);
 		     map.put("data", list);
@@ -57,17 +57,18 @@ public class ChooseBiBasedAction extends HttpServlet {
 		     String jsonResult=JSON.toJSONString(map);
 		     response.getWriter().write(jsonResult);
 		}
+		//教师的选课题列表
 		else if(flag.equals("selectTeaBiBased"))
 		{
 			 WlrBiBasedService service=new WlrBiBasedService();
 			 List<BiBased> list=null;
 			 int pageSize=Integer.parseInt(request.getParameter("pageSize"));
 		     int pageIndex=Integer.parseInt(request.getParameter("pageIndex"));
-		     int total= service.getTotal("bibased");
-		   //  int total= service.getTotal("bibased",username);
-		     String adviser=request.getParameter("adviser");
+		     String username=request.getParameter("username");
+		     String bibtitle=request.getParameter("bibtitle");
 		     //获取页面要显示的bibased数据
-	         list=service.getTeaBiBasedByWhere(pageSize, pageIndex, adviser);
+	         list=service.getTeaBiBasedByWhere(pageSize, pageIndex,bibtitle,username);
+	         int total= list.size();
 		     HashMap<String, Object> map=new HashMap<>();
 		     map.put("total", total);
 		     map.put("data", list);
@@ -75,16 +76,38 @@ public class ChooseBiBasedAction extends HttpServlet {
 		     String jsonResult=JSON.toJSONString(map);
 		     response.getWriter().write(jsonResult);
 		}
-		//2018
+		//管理员的选课题列表
+		else if(flag.equals("selectManBiBased"))
+		{
+			 WlrBiBasedService service=new WlrBiBasedService();
+			 List<BiBased> list=null;
+			 int pageSize=Integer.parseInt(request.getParameter("pageSize"));
+		     int pageIndex=Integer.parseInt(request.getParameter("pageIndex"));
+		     //获取bibased表的记录总数
+		     String username=request.getParameter("username");
+		     String adviser=request.getParameter("adviser");
+		     String bibtitle=request.getParameter("bibtitle");	
+		     //获取页面要显示的bibased数据
+	         list=service.getManBiBasedByWhere(pageSize,pageIndex,adviser,bibtitle,username);
+	         int total= list.size();
+		     HashMap<String, Object> map=new HashMap<>();
+		     map.put("total", total);
+		     map.put("data", list);
+		     //map转换为json再到String
+		     String jsonResult=JSON.toJSONString(map);
+		     response.getWriter().write(jsonResult);
+		}
+		//学生选择课题
 		else if(flag.equals("addStuBiBased"))
 		{
-			String json2Obj=request.getParameter("submitData");
+			String json2Obj=request.getParameter("data");
 			//将json数据转换为BiBased
 			BiBased bibased=JSON.parseObject(json2Obj,BiBased.class);
-			bibased.setStudent(request.getParameter("username"));
+			bibased.setStudent(request.getParameter("selecter"));
 			WlrBiBasedService service=new WlrBiBasedService();
 			service.addSelectStuBiased(bibased);
 		}
+		//学生取消选择课题
 		else if(flag.equals("cancelStuBiBased"))
 		{
 			String bibno=request.getParameter("data");
@@ -92,6 +115,7 @@ public class ChooseBiBasedAction extends HttpServlet {
 			WlrBiBasedService service=new WlrBiBasedService();
 			service.unSelectBiBased(bibno, student);
 		}
+		//学生选择课题的数目
 		else if(flag.equals("selectCount"))
 		{
 			String username=request.getParameter("username");
@@ -100,6 +124,7 @@ public class ChooseBiBasedAction extends HttpServlet {
 			String jsonResult=JSON.toJSONString(count);
 			response.getWriter().write(jsonResult);
 		}
+		//学生是否已经选中课题
 		else if(flag.equals("selectedAlready"))
 		{
 			String username=request.getParameter("username");
@@ -108,6 +133,7 @@ public class ChooseBiBasedAction extends HttpServlet {
 			String jsonResult=JSON.toJSONString(count);
 			response.getWriter().write(jsonResult);
 		}
+		//教师确认学生选中课题
 		else if(flag.equals("certenStuBiBased"))
 		{
 			String bibno=request.getParameter("data");

@@ -30,7 +30,8 @@
             <div field="bibtitle" width="120" headerAlign="center" allowSort="true">课题题目</div>  
             <div field="bibcontent" width="120" renderer="onGenderRenderer" >课题要求</div>  
             <div field="adviser" width="120" renderer="onGenderRendere" >指导老师</div>
-            <div field="student" width="100" dateFormat="yyyy-MM-dd">选课学生</div>          
+            <div field="student" width="100" dateFormat="yyyy-MM-dd">选课学生</div>     
+            <div field="center" width="100"  renderer="onPassRenderer" >学生选题状态</div>       
             <div field="edit" width="100"  renderer="onActionRenderer" >操作</div>                                                 
         </div>
     </div>
@@ -49,6 +50,8 @@
  	} 
     mini.parse();
     var grid = mini.get("datagrid1");
+    
+    //根据用户类型分别加载数据
     if(Request["userdegree"]=="学生")
 	{
     selectedAlready();
@@ -56,10 +59,17 @@
 	}
     else if(Request["userdegree"]=="教师")
     	{
-    	 grid.load({"flag":"selectTeaBiBased","adviser":Request["username"]});
+    	 grid.load({"flag":"selectTeaBiBased","username":Request["username"]});
     	}
+    else if(Request["userdegree"]=="管理员")
+	{
+    grid.load({"flag":"selectManBiBased","username":Request["username"]});
+	}
+    
+    
+    
     var select=0;
-    //判断学生是否已经选中题目
+    //判断学生是否已经选中题目，来加载数据
     function selectedAlready()
     {
    	 $.ajax({            	
@@ -69,14 +79,14 @@
          success: function (text) {
         	 var jsonData = JSON.parse(text); 
         	 select=jsonData;
-        	 alert("select"+jsonData);
+        	 
       	   if(select==1)
     	   {
-    	   grid.load({"flag":"selectBiBased","student":Request["username"]});
+    	   grid.load({"flag":"selectBiBased","username":Request["username"],"selected":"yes"});
     	   }
            else 
     	   {
-    	   grid.load({"flag":"selectBiBased","student":Request["username"],"selected":"not"});
+    	   grid.load({"flag":"selectBiBased","username":Request["username"],"selected":"not"});
     	   }
         	 
          },
@@ -85,24 +95,35 @@
          }
      });
     }
-
-
-   if(Request["userdegree"]=="管理员")
-	{
-    grid.load({"flag":"selectBiBased"});
-	}
- 
-   // grid.load({"flag":"selectBiBased"});
-
+    //查询按钮
     function search(){
     	var search1 = mini.get("key1");
     	var search2 = mini.get("key2");
     	var arg1=search1.getValue();
     	var arg2=search2.getValue();
-    	grid.load({"bibtitle":arg1,"adviser":arg2,"flag":"selectBiBased"});	
+        if(Request["userdegree"]=="学生")
+    	{
+        	grid.load({"bibtitle":arg1,"adviser":arg2,"flag":"selectBiBased","username":Request["username"],"selected":"not"});	
+    	}
+        else if(Request["userdegree"]=="教师")
+        	{
+        	 grid.load({"bibtitle":arg1,"adviser":arg2,"flag":"selectTeaBiBased","username":Request["username"]});
+        	}
+        else if(Request["userdegree"]=="管理员")
+    	{
+        grid.load({"bibtitle":arg1,"adviser":arg2,"flag":"selectManBiBased","username":Request["username"]});
+    	}
     }
     
-    
+    //选题状态渲染
+    var pass = [{ id: 1, text: '已通过' }, { id: 0, text: '未通过'}];        
+    function onPassRenderer(e) {
+        for (var i = 0, l = pass.length; i < l; i++) {
+            var g = pass[i];
+            if (g.id == e.value) return g.text;
+        }
+        return "";
+    }
 
     //操作渲染器
     function onActionRenderer(e) {
@@ -112,67 +133,54 @@
     	var rowIndex = e.rowIndex;
     	if(Request["userdegree"]=="学生")
     		{
+    		//已选中的学生不能操作
     		if(select==1)
     			{
     			var s='';
     			}
     		else
     			{
-    			var s = '<a  class="Edit_Button"  href="javascript:selectTest()">选   择</a> &nbsp&nbsp<a class="Edit_Button" href="javascript:remove()">取消选择</a> &nbsp';
+    			var s = '<a  class="Edit_Button"  href="javascript:selectT()">选   择</a> &nbsp&nbsp<a class="Edit_Button" href="javascript:remove()">取消选择</a> &nbsp';
             	
     			}
-        	
     		}
+    	//教师或管理员渲染“确认”
     	else
     		{
-    		if(certened==1)
-    			{
-                var row = grid.getSelected();
-                
-    			var s = '<text>通过</text> &nbsp';
-    			}
-               else
-               {
             	   var s = '<a class="Edit_Button" href="javascript:certen()">确认</a> &nbsp';
-               }
-    		
     		}
     	return s;
      
     }
-    
-  function  selectTest()
+    //学生选择题目
+  function  selectT()
   {
 	  if(index<3)
 		  {
-		  var rows = grid.getSelecteds();
-		  if (rows.length > 0) {
+		  var rows= grid.getSelected();
+		  if(rows.student==Request["username"])
+			  {
+			  alert("你已经选择了此课题，不需要重复选择");
+			  }
+		  else
+			  {
 	          if (confirm("确定选择此课题？")) {
 	        	  var json=mini.encode(rows);
-	              var ids = [];
-	              for (var i = 0, l = rows.length ;i < l; i++) {
-	                  var r = rows[i];
-	                  ids.push(r.bibno);
-	              }
-	              var id = ids.join(',');
+	           
 	              grid.loading("操作中，请稍后......");
 	              $.ajax({
 	                  url: "/WlrBiBased/ChooseBiBasedAction" ,
-	                  data:{data:id,selecter:Request["username"],flag:"addStuBiBased"},
+	                  data:{data:json,selecter:Request["username"],flag:"addStuBiBased"},
 	                  success: function (text) {
 	                  	 grid.reload(); 
-	                //  	selectedAlready();
 	                  	 getCount();
 	                  },
 	                  error: function () {
 	                  }
 	              });
 	          }
-	      } 
-	      else
-	      {
-	          alert("请选中一条记录");
-	      }
+			  }
+ 
 		  }
 	  else
 		  {
@@ -192,7 +200,6 @@
          success: function (text) {
         	 var jsonData = JSON.parse(text); 
         	 index=jsonData;
-        	 alert("index"+index);
         	 
          },
          error: function (jqXHR, textStatus, errorThrown) {
@@ -202,66 +209,48 @@
     }
     
       
-    
+    //学生取消选择
     function remove() {        
-        var rows = grid.getSelecteds();
-        if (rows.length > 0) {
-            if (confirm("确定取消选择？")) {
-                var ids = [];
-                for (var i = 0, l = rows.length; i < l; i++) {
-                    var r = rows[i];
-                    ids.push(r.bibno);
-                }
-                var id = ids.join(',');
-                grid.loading("操作中，请稍后......");
-                $.ajax({
-                    url: "/WlrBiBased/ChooseBiBasedAction" ,
-                    data:{data:id,selecter:Request["username"],flag:"cancelStuBiBased"},
-                    success: function (text) {
-                    	 grid.reload(); 
-                    	 getCount();
-                    },
-                    error: function () {
-                    }
-                });
-            }
-        } else {
-            alert("请选中一条记录");
-        }
+        var rows = grid.getSelected();
+
+	           if (confirm("确定取消选择？")) {
+	               
+	                $.ajax({
+	                    url: "/WlrBiBased/ChooseBiBasedAction" ,
+	                    data:{data:rows.bibno,selecter:Request["username"],flag:"cancelStuBiBased"},
+	                    success: function (text) {
+	                    	 grid.reload(); 
+	                    	 getCount();
+	                    },
+	                    error: function () {
+	                    }
+	                });
+	            }
     }
-    
-    var certened=0;
+    //教师，管理员确认
     function certen() {        
-        var rows = grid.getSelecteds();
-        if (rows.length > 0) {
-            if (confirm("确定选择？")) {
-              var ids = [];
-                var stus=[];
-                for (var i = 0, l = rows.length; i < l; i++) {
-                    var r = rows[i];
-                    ids.push(r.bibno);
-                    stus.push(r.student);
-                }
-                var id = ids.join(',');
-                var stu=stus.join(',');
-                //var id =row.bibno;
-                //var stu=row.student
-                grid.loading("操作中，请稍后......");
-                $.ajax({
-                    url: "/WlrBiBased/ChooseBiBasedAction" ,
-                    data:{data:id,selecter:stu,flag:"certenStuBiBased"},
-                    success: function (text) {
-                   	 var jsonData = JSON.parse(text); 
-                   	certened=jsonData;
-                    	 grid.reload(); 
-                    },
-                    error: function () {
-                    }
-                });
-            }
-        } else {
-            alert("请选中一条记录");
-        }
-    }  
+        var rows = grid.getSelected();
+		  if(rows.student=="" || rows.center==1)
+		  {
+		  alert("确认无效");
+		  }
+		  else
+			  {
+	            if (confirm("确定选择？")) {
+
+              $.ajax({
+                  url: "/WlrBiBased/ChooseBiBasedAction" ,
+                  data:{data:rows.bibno,selecter:rows.student,flag:"certenStuBiBased"},
+                  success: function (text) {
+                	 grid.reload(); 
+                 	 alert("确认成功");
+                  },
+                  error: function () {
+                  }
+              });
+	            }
+			  }
+           
+    }
  </script>
 </html>

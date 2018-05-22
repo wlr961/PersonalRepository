@@ -139,7 +139,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 <!-- newslist -->
                 <div>		
 				<ul id="flexiselDemo1" >			
-					<li>
+					<li onclick="javascript:downpaper('2')">
 						<div class="testimonials-grid">
 							<div class="col-xs-5 testimonials-grid-left">
 								<!--   <img src="images/1.png" alt=" " class="img-responsive" />-->
@@ -224,6 +224,8 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 								});
 								
 							});
+							
+ 
 					</script>
 					<script type="text/javascript" src="js/jquery.flexisel.js"></script>
 					</div>
@@ -438,7 +440,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 			</div>
 		</div>
 	</div>
-
+<form id="DownloadAction"  method="post"></form> 
 <!--//footer-->
 <!-- for bootstrap working -->
 		<script src="js/bootstrap.js"> </script>
@@ -470,6 +472,13 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 			$().UItoTop({ easingType: 'easeOutQuart' });
 								
 			});
+		
+	    function downpaper(newid)
+	    {
+	    	var o=document.getElementById("DownloadAction");
+	    	o.action="/WlrBiBased/NewsAction?newid="+newid+"&flag=downNews";
+	    	o.submit();
+	    }
 	</script>
 <!-- //here ends scrolling icon -->
 </body>
